@@ -209,6 +209,7 @@ def run(
                 t5 = time_sync()
                 dt[3] += t5 - t4
 
+                dt_prediction = 0
                 # draw boxes for visualization
                 if len(outputs[i]) > 0:
                     for j, (output, conf) in enumerate(zip(outputs[i], confs)):
@@ -234,12 +235,16 @@ def run(
                             label = None if hide_labels else (f'{id} {names[c]}' if hide_conf else \
                                 (f'{id} {conf:.2f}' if hide_class else f'{id} {names[c]} {conf:.2f}'))
                             annotator.box_label(bboxes, label, color=colors(c, True))
-                            annotator.box_label(predictor.predict(fid=frame_idx+1, uid=id, bbox=bboxes))
+                            t10 = time_sync()
+                            pred_bbox = predictor.predict(fid=frame_idx+1, uid=id, bbox=bboxes)
+                            t11 = time_sync()
+                            dt_prediction += (t11 - t10)
+                            annotator.box_label(pred_bbox)
                             if save_crop:
                                 txt_file_name = txt_file_name if (isinstance(path, list) and len(path) > 1) else ''
                                 save_one_box(bboxes, imc, file=save_dir / 'crops' / txt_file_name / names[c] / f'{id}' / f'{p.stem}.jpg', BGR=True)
 
-                LOGGER.info(f'{s}Done. YOLO:({t3 - t2:.3f}s), StrongSORT:({t5 - t4:.3f}s)')
+                LOGGER.info(f'{s}Done. YOLO:({t3 - t2:.3f}s), StrongSORT:({t5 - t4:.3f}s), Prediction:({dt_prediction})')
 
             else:
                 strongsort_list[i].increment_ages()

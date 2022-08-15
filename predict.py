@@ -37,7 +37,7 @@ class Predictor:
         # print(new_points)
         return new_points
 
-    TRANSFORMED_CAR_POINTS = _get_transformed_points(M, CAR_POINTS)
+    TRANSFORMED_CAR_POINTS = M @ CAR_POINTS
 
     def predict(self, fid, uid, bbox):
             w = bbox[2] - bbox[0]
@@ -56,8 +56,8 @@ class Predictor:
             
             velocity = 0
             if self.history.get(uid):
-                last_pos = self.history.get(uid).get('positions')[-1]
-                velocity = (curr_point - last_pos) / Predictor.TIME_SEC
+                last_pos = self.history.get(uid).get('positions')[-1 if len(self.history.get(uid).get('positions')) < Predictor.STEP else -Predictor.STEP]
+                velocity = (curr_point - last_pos) / (Predictor.TIME_SEC if len(self.history.get(uid).get('positions')) < Predictor.STEP else Predictor.TIME_SEC * Predictor.STEP)
                 self.history[uid]['last_detected'] = fid
                 self.history[uid]['positions'].append(curr_point)
                 self.history[uid]['velocities'].append(velocity)
@@ -72,8 +72,8 @@ class Predictor:
             next_frame_point = curr_point + velocity * Predictor.TIME_SEC
 
             next_original_point = self._get_transformed_points(Predictor.M_INV, next_frame_point)
-            print(next_original_point.shape)
-            print(next_original_point)
+            # print(next_original_point.shape)
+            # print(next_original_point)
             
             x = next_original_point[0,0]
             y = next_original_point[1,0]
