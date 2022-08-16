@@ -34,7 +34,7 @@ class Predictor:
 
     valley_x1 = 413
     valley_x2 = 622
-    valley_y = 636
+    valley_y = 680
 
     def _get_transformed_points(self, M, points):
         # den = point @ M[2]  # M[2, 0] * x + M[2, 1] * y + M[2, 2]
