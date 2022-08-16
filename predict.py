@@ -12,11 +12,17 @@ class Predictor:
     MAX_AGE = 30
     SAFE_DISTANCE_THRESHOLD = 10
 
+    # M = np.array([
+    #     [2.78644210e-16,  2.29706390e-01, -1.74947611e+02],
+    #     [-4.43293034e-02, -7.59930915e-01,  2.76868164e+02],
+    #     [1.74645934e-18, -3.07042794e-03,  1.00000000e+00]
+    # ])
     M = np.array([
-        [2.78644210e-16,  2.29706390e-01, -1.74947611e+02],
-        [-4.43293034e-02, -7.59930915e-01,  2.76868164e+02],
-        [1.74645934e-18, -3.07042794e-03,  1.00000000e+00]
-    ])
+      [-3.25696188e-01, -1.76543893e+00,  7.35773724e+02],
+      [ 9.47390314e-15, -3.81113414e+00,  1.29643161e+03],
+      [ 1.20366147e-17, -3.39507486e-03,  1.00000000e+00]
+      ])
+
     M_INV = inv(M)
 
     CAR_POINTS = np.array([
@@ -61,6 +67,7 @@ class Predictor:
                 self.history[uid]['last_detected'] = fid
                 self.history[uid]['positions'].append(curr_point)
                 self.history[uid]['velocities'].append(velocity)
+                velocity = sum(self.history[uid]['velocities'][-Predictor.STEP:])/ Predictor.STEP
             else:
                 # velocity = (curr_point - curr_point) / Predictor.TIME_SEC
                 self.history[uid] = {
@@ -69,7 +76,8 @@ class Predictor:
                     'velocities': [0]
                 }
 
-            next_frame_point = curr_point + velocity * Predictor.TIME_SEC
+            next_frame_point = curr_point + velocity * Predictor.TIME_SEC * 5
+            
 
             next_original_point = self._get_transformed_points(Predictor.M_INV, next_frame_point)
             # print(next_original_point.shape)
