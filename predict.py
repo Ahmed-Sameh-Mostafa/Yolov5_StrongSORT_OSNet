@@ -32,6 +32,10 @@ class Predictor:
 
     history = {}
 
+    valley_x1 = 413
+    valley_x2 = 622
+    valley_y = 636
+
     def _get_transformed_points(self, M, points):
         # den = point @ M[2]  # M[2, 0] * x + M[2, 1] * y + M[2, 2]
         # x_new = point @ M[0] / den  # (M[0, 0] * x + M[0, 1] * y + M[0, 2]) / den
@@ -77,6 +81,13 @@ class Predictor:
                 }
 
             next_frame_point = curr_point + velocity * Predictor.TIME_SEC * 5
+
+            if (next_frame_point[1][0]/ next_frame_point[2][0] >= Predictor.valley_y) and (Predictor.valley_x1 <= next_frame_point[0][0]/ next_frame_point[2][0] <= Predictor.valley_x2):
+                person_status = 'Dead'
+                color = (255,0,0)
+            else:
+                person_status = 'Not Dead yet'
+                color = (0,255,0)
             
 
             next_original_point = self._get_transformed_points(Predictor.M_INV, next_frame_point)
@@ -86,5 +97,5 @@ class Predictor:
             x = next_original_point[0,0]
             y = next_original_point[1,0]
 
-            return x-w//2, y-h, x+w//2, y
+            return (x-w//2, y-h, x+w//2, y), person_status, color
             
