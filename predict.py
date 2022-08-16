@@ -84,7 +84,7 @@ class Predictor:
 
             if (next_frame_point[1][0]/ next_frame_point[2][0] >= Predictor.valley_y) and (Predictor.valley_x1 <= next_frame_point[0][0]/ next_frame_point[2][0] <= Predictor.valley_x2):
                 person_status = 'Dead'
-                color = (255,0,0)
+                color = (0,0,255)
             else:
                 person_status = 'Not Dead yet'
                 color = (0,255,0)

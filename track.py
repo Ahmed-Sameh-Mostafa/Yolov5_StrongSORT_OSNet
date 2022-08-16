@@ -234,7 +234,7 @@ def run(
                             id = int(id)  # integer id
                             label = None if hide_labels else (f'{id} {names[c]}' if hide_conf else \
                                 (f'{id} {conf:.2f}' if hide_class else f'{id} {names[c]} {conf:.2f}'))
-                            annotator.box_label(bboxes, label, color=(0,0, 255))
+                            annotator.box_label(bboxes, label, color=(255,0, 0))
                             t10 = time_sync()
                             pred_bbox, person_status, color = predictor.predict(fid=frame_idx+1, uid=id, bbox=bboxes)
                             t11 = time_sync()
